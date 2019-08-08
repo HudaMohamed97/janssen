@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "91069075945",
+    "firebase_url": "https://janssen-d3c20.firebaseio.com",
+    "project_id": "janssen-d3c20",
+    "storage_bucket": "janssen-d3c20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91069075945:android:4e600b7eb6e3bfe2",
+        "android_client_info": {
+          "package_name": "eg.com.cat.janssen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "91069075945-5lpi5ohf6abhbbit0gq3md6kvqdd2gk4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJL6JUT52Hv-YzuTn8ciZn-nw5s6IcXfs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
