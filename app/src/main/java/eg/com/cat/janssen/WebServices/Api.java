@@ -46,7 +46,6 @@ public interface Api {
     @POST("reset-password")
     Call<ResponseBody> Reset_Password(@Body Map<String, String> headers);
 
-
     @POST("update-user-image")
     Call<ResponseBody> update_user_image(@Body Map<String, String> headers);
 

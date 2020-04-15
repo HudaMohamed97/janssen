@@ -71,29 +71,23 @@ public class ForgetPasswordActivity extends AppCompatActivity {
             Webservice.getInstance().getApi().Reset_Password(data).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
                     if (response.isSuccessful()) {
                         progress.dismiss();
                         Toast.makeText(ForgetPasswordActivity.this, response.body().toString(), Toast.LENGTH_LONG).show();
-
                     } else {
                         progress.dismiss();
-
                         try {
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
                             Toast.makeText(ForgetPasswordActivity.this, jObjError.getString("data"), Toast.LENGTH_LONG).show();
                         } catch (Exception e) {
                             Toast.makeText(ForgetPasswordActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-
-
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Toast.makeText(ForgetPasswordActivity.this, "failure , check your connection", Toast.LENGTH_LONG).show();
-                    //Log.e("login", "onFailure: ", t);
                 }
             });
         }

@@ -371,9 +371,8 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
 
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "yyyy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
-
         input_date_rec.setText(sdf.format(myCalendar.getTime()));
     }
 
