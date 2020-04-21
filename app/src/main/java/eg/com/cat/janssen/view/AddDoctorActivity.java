@@ -15,8 +15,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,18 +27,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import eg.com.cat.janssen.R;
 import eg.com.cat.janssen.WebServices.Webservice;
 import eg.com.cat.janssen.model.CountryResponseModel;
 import eg.com.cat.janssen.model.DocModel;
 import eg.com.cat.janssen.model.UserModel;
+import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
+import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,18 +46,22 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
 
     final Calendar myCalendar = Calendar.getInstance();
     EditText input_name, input_doc_id, input_hospital, input_date_rec;
-    Spinner input_business_sector, input_patient_profile, countrySpinner;
-    LinearLayout cityLinearView;
+    Spinner input_business_sector, input_patient_profile;
+    TextView countrySpinner, input_city;
     Button addDoc;
+    int countrySelection;
     ArrayAdapter<String> countryArray, businessSectorArray, patientProfileArray;
-    List<String> city;
+    ArrayList<String> cityName= new ArrayList<>();
+    ArrayList<String> cityId;
     String cityID;
+    SpinnerDialog country_Spinner, citySpinner;
     String item = "0";
     CheckBox checkBox;
     SharedPreferences mPrefs;
     ProgressDialog progress;
     UserModel currentuser;
     DocModel docModel;
+    ArrayList<String> dept = new ArrayList<String>();
     private Handler handler;
     private CountryResponseModel countryResponseModel;
     private String business_sectorItem = "MOH", patient_profileItem = "Bio-Naive";
@@ -89,10 +91,30 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
         input_patient_profile = findViewById(R.id.input_patient_profile);
 
         countrySpinner = findViewById(R.id.input_country);
-        cityLinearView = findViewById(R.id.input_city);
+        input_city = findViewById(R.id.input_city);
         addDoc = findViewById(R.id.btn_add_doc);
+        countrySpinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initCountrySpinner();
+                country_Spinner.showSpinerDialog();
+            }
+        });
+        input_city.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cityName.size() != 0) {
+                    initCitySpinner();
+                    citySpinner.showSpinerDialog();
+                } else {
+                    Toast.makeText(AddDoctorActivity.this, "Please Select Country First Thanks.", Toast.LENGTH_LONG).show();
 
-        countrySpinner.setOnItemSelectedListener(AddDoctorActivity.this);
+                }
+
+            }
+        });
+
+
         input_business_sector.setOnItemSelectedListener(AddDoctorActivity.this);
         input_patient_profile.setOnItemSelectedListener(AddDoctorActivity.this);
 
@@ -143,41 +165,60 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
     }
 
 
+    private void initCountrySpinner() {
+
+        country_Spinner = new SpinnerDialog(AddDoctorActivity.this, dept, "Select Hospital");// With No Animation
+
+        country_Spinner.setCancellable(true); // for cancellable
+        country_Spinner.setShowKeyboard(false);// for open keyboard by default
+
+        country_Spinner.bindOnSpinerListener(new OnSpinerItemClick() {
+            @Override
+            public void onClick(String item2, int position) {
+                countrySpinner.setText(dept.get(position));
+                progress.show();
+                item = String.valueOf(position);
+                if (countryResponseModel != null) {
+                    prepareCitiesList(item);
+                }
+                progress.dismiss();
+
+                // selectedHospitalId = hospitals.get(position).getId();
+
+
+                //  initDoctorsSpinner(prepareDoctorsStringList(hospitals.get(position).getDoctors()));
+
+            }
+        });
+
+    }
+
     private void setUserData() {
-
         docModel = DocModel.getInstance();
-
         input_name.setText(docModel.getName());
         input_hospital.setText(docModel.getHospital_name());
         input_date_rec.setText(docModel.getDate_of_recruitment());
+        countrySpinner.setText(docModel.getCountry());
+        input_city.setText(docModel.getCity());
+
 
     }
 
     private void setSpinners() {
-
         List<String> dept = new ArrayList<String>();
-
         dept.add("MOH");
         dept.add("GOV");
         dept.add("PVT");
-
-
         businessSectorArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dept);
-
         businessSectorArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         input_business_sector.setAdapter(businessSectorArray);
-
-
         List<String> dept1 = new ArrayList<String>();
-
         dept1.add("Bio-Naive");
         dept1.add("Bio-Exp Anti TNF");
         dept1.add("Bio Exp IL17");
         dept1.add("Bio - Exp IL 12-23");
-
-
-        patientProfileArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dept1);
-
+        dept1.add("Experienced");
+        patientProfileArray = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dept1);
         patientProfileArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         input_patient_profile.setAdapter(patientProfileArray);
 
@@ -186,34 +227,38 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
 
 
     private void prepareCitiesList(String item) {
-
-        cityLinearView.removeAllViews();
-        city = new ArrayList<>();
-
-
-        LinkedHashMap<String, String> cities = new LinkedHashMap<String, String>();
-
-        for (int i = 0; i < countryResponseModel.getData().get(Integer.parseInt(item)).getCities().size(); ++i)
-            cities.put(
-                    String.valueOf(countryResponseModel.getData().get(Integer.parseInt(item)).getCities().get(i).getId()),
-                    countryResponseModel.getData().get(Integer.parseInt(item)).getCities().get(i).getName()
-            );
-
-        Set<?> set = cities.entrySet();
-        Iterator<?> i = set.iterator();
-        while (i.hasNext()) {
-            @SuppressWarnings("rawtypes")
-            Map.Entry me = (Map.Entry) i.next();
-            System.out.print(me.getKey() + ": ");
-            System.out.println(me.getValue());
-            checkBox = new CheckBox(this);
-            checkBox.setId(Integer.parseInt(me.getKey().toString()));
-            checkBox.setText(me.getValue().toString());
-            checkBox.setOnClickListener(getOnClickDoSomething(checkBox));
-            cityLinearView.addView(checkBox);
+        cityId = new ArrayList<>();
+        for (int i = 0; i < countryResponseModel.getData().get(Integer.parseInt(item)).getCities().size(); ++i) {
+            cityId.add(String.valueOf(countryResponseModel.getData().get(Integer.parseInt(item)).getCities().get(i).getId()));
+            cityName.add(countryResponseModel.getData().get(Integer.parseInt(item)).getCities().get(i).getName());
         }
 
     }
+
+    private void initCitySpinner() {
+
+        citySpinner = new SpinnerDialog(AddDoctorActivity.this, cityName, "Select Hospital");// With No Animation
+        citySpinner.setCancellable(true); // for cancellable
+        citySpinner.setShowKeyboard(false);// for open keyboard by default
+
+        citySpinner.bindOnSpinerListener(new OnSpinerItemClick() {
+            @Override
+            public void onClick(String item, int position) {
+                input_city.setText(cityName.get(position));
+                progress.show();
+                cityID = String.valueOf(cityId.get(position));
+                progress.dismiss();
+
+                // selectedHospitalId = hospitals.get(position).getId();
+
+
+                //  initDoctorsSpinner(prepareDoctorsStringList(hospitals.get(position).getDoctors()));
+
+            }
+        });
+
+    }
+
 
     View.OnClickListener getOnClickDoSomething(final Button button) {
         return new View.OnClickListener() {
@@ -230,7 +275,6 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
     private void register() {
 
         progress.show();
-
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -297,12 +341,7 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-        progress.show();
-        if (countryResponseModel != null) {
-            item = String.valueOf(position);
-            prepareCitiesList(item);
-        }
-        progress.dismiss();
+
     }
 
     @Override
@@ -319,8 +358,6 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
             }
 
         };
-
-
         new Thread() {
             public void run() {
 
@@ -344,15 +381,14 @@ public class AddDoctorActivity extends FragmentActivity implements AdapterView.O
                         } else if (state == 1) {
                             Toast.makeText(AddDoctorActivity.this, message, Toast.LENGTH_SHORT).show();
 
-                            List<String> dept = new ArrayList<String>();
-
-                            for (int i = 0; i < response.body().getData().size(); ++i)
+                            for (int i = 0; i < response.body().getData().size(); ++i) {
                                 dept.add(response.body().getData().get(i).getName());
+                            }
 
-                            countryArray = new ArrayAdapter<String>(AddDoctorActivity.this, android.R.layout.simple_spinner_item, dept);
+                           /* countryArray = new ArrayAdapter<>(AddDoctorActivity.this, android.R.layout.simple_spinner_item, dept);
 
                             countryArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            countrySpinner.setAdapter(countryArray);
+                            countrySpinner.setAdapter(countryArray);*/
 
                         }
                     }

@@ -109,7 +109,7 @@ public class SearchDocActivity extends AppCompatActivity implements MyRecyclerVi
             public void onResponse(Call<DocModelResponse> call, Response<DocModelResponse> response) {
                 if (response.isSuccessful()) {
                     progress.dismiss();
-                    Toast.makeText(SearchDocActivity.this, response.body().toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchDocActivity.this, "Success", Toast.LENGTH_LONG).show();
 
                     if (response.body().getState() == 0) {
                         progress.dismiss();
@@ -123,7 +123,6 @@ public class SearchDocActivity extends AppCompatActivity implements MyRecyclerVi
                         for (int i = 0; i < response.body().getData().size(); ++i) {
                             names.add(response.body().getData().get(i).getName());
                         }
-
                         setupRCV(names);
 
                         docModelResponse = response.body();
@@ -162,17 +161,18 @@ public class SearchDocActivity extends AppCompatActivity implements MyRecyclerVi
     @Override
     public void onItemClick(View view, int position) {
 
-        Toast.makeText(this
+      /*  Toast.makeText(this
                 , "You clicked " + adapter.getItem(position) + " on row number " + position
                 , Toast.LENGTH_SHORT).show();
-
+*/
 
         DocModel docModel = DocModel.getInstance();
-
         docModel.setId(docModelResponse.getData().get(position).getId());
         docModel.setName(docModelResponse.getData().get(position).getName());
         docModel.setDate_of_recruitment(docModelResponse.getData().get(position).getDate_of_recruitment());
         docModel.setHospital_name(docModelResponse.getData().get(position).getHospital_name());
+        docModel.setCity(docModelResponse.getData().get(position).getCity());
+        docModel.setCountry(docModelResponse.getData().get(position).getCountry());
 
 
 

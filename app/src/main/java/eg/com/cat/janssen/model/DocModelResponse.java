@@ -51,6 +51,8 @@ public class DocModelResponse {
         private String updated_at;
         private String country_id;
         private String city_id;
+        private String country;
+        private String city ;
         private String hospital_name;
         private String business_sector;
         private String date_of_recruitment;
@@ -142,6 +144,22 @@ public class DocModelResponse {
 
         public void setNumber_of_patients(int number_of_patients) {
             this.number_of_patients = number_of_patients;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public void setCountry(String country) {
+            this.country = country;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
         }
     }
 }

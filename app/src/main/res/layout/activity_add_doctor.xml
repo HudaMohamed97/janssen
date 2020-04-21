@@ -164,48 +164,32 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/country"
                 android:gravity="center_vertical"
-                android:hint="Patient profile"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textAlignment="center" />
 
 
-            <Spinner
+            <TextView
                 android:id="@+id/input_country"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/country"
                 android:gravity="center_vertical"
-                android:hint="Country"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAlignment="center" />
+                android:text="Country"
+                android:textAlignment="center"
+                android:textColor="@color/black" />
 
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/input_city"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/city">
-
-                <LinearLayout
-                    android:id="@+id/input_city"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="55dp"
-                    android:layout_marginLeft="55dp"
-                    android:gravity="center_vertical"
-                    android:hint="city"
-                    android:maxLines="1"
-                    android:orientation="horizontal"
-                    android:singleLine="true" />
-
-            </LinearLayout>
-
-
+                android:background="@drawable/city"
+                android:gravity="center_vertical"
+                android:text="City"
+                android:textAlignment="center"
+                android:textColor="@color/black" />
 
 
             <Button

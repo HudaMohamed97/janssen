@@ -26,6 +26,8 @@ public class DocModel extends Observable {
     private String created_at;
     private String updated_at;
     private String country_id;
+    private String city;
+    private String country;
     private String city_id;
     private String hospital_name;
     private String business_sector;
@@ -142,5 +144,21 @@ public class DocModel extends Observable {
 
     public void setNumber_of_patients(int number_of_patients) {
         this.number_of_patients = number_of_patients;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }
